@@ -17,10 +17,8 @@ from datetime import datetime
 num_retries = 5
 
 #API stuff
-openai.api_key = open("/Users/jackogozaly/Desktop/Python_Directory/key.txt", "r").read().strip("\n")
-quickstats_api_key = open("/Users/jackogozaly/Desktop/Python_Directory/nass_key.txt", "r").read().strip("\n")
-
-
+openai.api_key = st.secrets["openai_key"]
+quickstats_api_key = st.secrets["nass_key"]
 
 ##___________________Bot 1 configuration______________________________##
 messenger_bot_chat = [{"role": "user", "content": 
