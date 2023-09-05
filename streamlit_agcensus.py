@@ -195,6 +195,7 @@ def fake_typing(text):
 #st.set_page_config(layout="wide")
 #Website Name
 st.title("AgCensusGPT")
+st.caption('This is an un-official application. Please use responsibly.')
                                             
 
 # Initialize chat history
@@ -325,9 +326,10 @@ if prompt := st.chat_input("What is your question?"):
                                      model= model)
                     
                     ideas = re.sub("\n```python.*?\n```", '', eda_output, flags=re.DOTALL)
-
+                    
                     fake_typing(ideas)
-                
+
+                    fake_typing("Please select an idea by entering a number or you can suggest an idea of your own.")
                     
                     st.session_state.saved_api_data = api_data
                     
