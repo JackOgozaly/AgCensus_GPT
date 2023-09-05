@@ -308,7 +308,8 @@ if prompt := st.chat_input("What is your question?"):
                         api_data['Value'] = pd.to_numeric(api_data['Value'], errors= "coerce")
     
                     fake_typing(f"Data successfully pulled from NASS API with {api_data.shape[0]} rows and {api_data.shape[1]} columns")
-                    
+
+                    st.dataframe(api_data) 
                     
                     
                     #Since we successfully pulled the data, trigger EDA bot
@@ -316,7 +317,7 @@ if prompt := st.chat_input("What is your question?"):
                     #Make a copy since we don't want to have a super long chat log
                     eda_bot_chat = eda_bot_chat_og.copy()
                 
-                    fake_typing("Now generating some cool potential analyses!\n")
+                    fake_typing("Now generating some potential analyses!\n")
             
                     df_head = api_data.head().to_json(orient='records')[1:-1].replace('},{', '} {')
 
