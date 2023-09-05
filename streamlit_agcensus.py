@@ -206,6 +206,9 @@ if "messages" not in st.session_state:
 if "analysis" not in st.session_state:
     st.session_state.analysis = False
 
+if "df" not in st.session_state:
+    st.session_state.df = ''
+
 if 'total_cost' not in st.session_state:
     st.session_state['total_cost'] = 0.0
 
@@ -310,8 +313,12 @@ if prompt := st.chat_input("What is your question?"):
     
                     fake_typing(f"Data successfully pulled from NASS API with {api_data.shape[0]} rows and {api_data.shape[1]} columns")
 
-                    st.dataframe(api_data) 
+                    #st.dataframe(api_data) 
+                    # Store the DataFrame in the `st.session_state` object
+                    st.session_state['df'] = api_data
                     
+                    # Display the DataFrame in the chat history
+                    st.write(st.session_state['df'])
                     
                     #Since we successfully pulled the data, trigger EDA bot
                     st.session_state.analysis = True
