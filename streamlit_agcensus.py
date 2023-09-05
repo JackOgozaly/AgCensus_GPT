@@ -318,8 +318,9 @@ if prompt := st.chat_input("What is your question?"):
                     st.session_state['df'] = api_data
                     
                     # Display the DataFrame in the chat history
-                    st.write(st.session_state['df'])
-                    
+                    #st.write(st.session_state['df'])
+                    st.session_state.messages.append({"role": "assistant", "content": st.dataframe(api_data)})
+                  
                     #Since we successfully pulled the data, trigger EDA bot
                     st.session_state.analysis = True
                     #Make a copy since we don't want to have a super long chat log
