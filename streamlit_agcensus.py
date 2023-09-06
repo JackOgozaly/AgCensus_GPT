@@ -240,7 +240,19 @@ if "api_bot_chat" not in st.session_state:
 
 if "eda_bot_chat_og" not in st.session_state:
     st.session_state.eda_bot_chat_og = eda_bot_chat_og
+  
+#Initialize Counter
+if 'count' not in st.session_state:
+    st.session_state.count = 0
 
+if 'analysis_count' not in st.session_state:
+    st.session_state.analysis_count = 0
+    
+if 'saved_api_data' not in st.session_state:
+    st.session_state.saved_api_data = None
+    
+if 'eda_convo' not in st.session_state:
+    st.session_state.eda_convo = None
 
 # Sidebar - let user choose model, see cost, and clear history
 st.sidebar.title("Chatbot Options")
@@ -259,6 +271,11 @@ if clear_button:
     st.session_state['api_bot_chat'] = api_bot_chat
     st.session_state['eda_bot_chat_og'] = eda_bot_chat_og
 
+    st.session_state['count'] = 0
+    st.session_state['analysis_count'] = 0
+    st.session_state['saved_api_data'] = None
+    st.session_state['eda_convo'] = None
+
     st.session_state['cost'] = 0.0
     st.session_state['total_cost'] = 0.0
     st.session_state['total_tokens'] = []
@@ -270,20 +287,6 @@ if model_name == "GPT-3.5":
     model = "gpt-3.5-turbo"
 else:
     model = "gpt-4"
-
-
-#Initialize Counter
-if 'count' not in st.session_state:
-    st.session_state.count = 0
-
-if 'analysis_count' not in st.session_state:
-    st.session_state.analysis_count = 0
-    
-if 'saved_api_data' not in st.session_state:
-    st.session_state.saved_api_data = None
-    
-if 'eda_convo' not in st.session_state:
-    st.session_state.eda_convo = None
 
     
 # Display chat messages from history on app rerun
