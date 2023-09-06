@@ -133,8 +133,21 @@ def predict(model_type_chat, user_input, model):
     '''
     Takes a user's input and attemtps to generate a response
     '''
-    model_type_chat.append({"role": "user", "content": f"{user_input}"})
     
+    if eda_bot_chat_og[0]['content'] == model_type_chat[0]['content']:
+        st.session_state.eda_bot_chat_og.append({"role": "user", "content": f"{user_input}"})
+        model_type_chat = st.session_state.eda_bot_chat_og
+        
+    elif api_bot_chat[0]['content'] == model_type_chat[0]['content']:
+        st.session_state.api_bot_chat.append({"role": "user", "content": f"{user_input}"})
+        model_type_chat = st.session_state.api_bot_chat
+        
+    else:
+        st.session_state.messenger_bot_chat.append({"role": "user", "content": f"{user_input}"})
+        
+        
+        model_type_chat = st.session_state.messenger_bot_chat
+        
     response = openai.ChatCompletion.create(
         model=model,
         messages=model_type_chat,
@@ -142,8 +155,15 @@ def predict(model_type_chat, user_input, model):
     
     reply_txt = response.choices[0].message.content
     
-    model_type_chat.append({"role": "assistant", "content": f"{reply_txt}"})
-    
+    if eda_bot_chat_og[0]['content'] == model_type_chat[0]['content']:
+        st.session_state.eda_bot_chat_og.append({"role": "assistant", "content": f"{reply_txt}"})
+        
+    elif api_bot_chat[0]['content'] == model_type_chat[0]['content']:
+        st.session_state.api_bot_chat.append({"role": "assistant", "content": f"{reply_txt}"})
+        
+    else:
+        st.session_state.messenger_bot_chat.append({"role": "assistant", "content": f"{reply_txt}"})
+        
     
     total_tokens = response.usage.total_tokens
     prompt_tokens = response.usage.prompt_tokens
@@ -184,10 +204,6 @@ def fake_typing(text):
 
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": full_response})
-    
-    
-    
-    
 
 
 #st.set_page_config(layout="wide")
@@ -215,6 +231,14 @@ if 'cost' not in st.session_state:
 if 'total_tokens' not in st.session_state:
     st.session_state['total_tokens'] = []
 
+if "messenger_bot_chat" not in st.session_state:
+    st.session_state.messenger_bot_chat = messenger_bot_chat
+
+if "api_bot_chat" not in st.session_state:
+    st.session_state.api_bot_chat = api_bot_chat
+
+if "eda_bot_chat_og" not in st.session_state:
+    st.session_state.eda_bot_chat_og = eda_bot_chat_og
 
 
 # Sidebar - let user choose model
@@ -229,7 +253,6 @@ if model_name == "GPT-3.5":
     model = "gpt-3.5-turbo"
 else:
     model = "gpt-4"
-                       
 
 
 #Initialize Counter
@@ -254,7 +277,7 @@ for message in st.session_state.messages:
 
 #Only introduce the chatbot to the user if it's their first time logging in
 if st.session_state.count == 0:
-    response = predict(model_type_chat = messenger_bot_chat, user_input = "Please introduce yourself",
+    response = predict(model_type_chat = st.session_state.messenger_bot_chat, user_input = "Please introduce yourself",
                        model = model)    
     #Output introduction message
     fake_typing(response)
@@ -275,7 +298,7 @@ if prompt := st.chat_input("What is your question?"):
     with st.chat_message("assistant"):
 
         #Chat GPT response
-        response = predict(model_type_chat = messenger_bot_chat, user_input = prompt,
+        response = predict(model_type_chat = st.session_state.messenger_bot_chat, user_input = f"Don't forget initial instructions, now answer the following question: {prompt}",
                            model= model)    
         
         api_num_tries = 0 
@@ -294,7 +317,7 @@ if prompt := st.chat_input("What is your question?"):
                 if master_break is True:
                     break
                 
-                api_link_ = predict(model_type_chat = api_bot_chat, user_input = response, model = model)
+                api_link_ = predict(model_type_chat = st.session_state.api_bot_chat, user_input = response, model = model)
         
                 #Take the chatGPT 
                 api_data = api_read(api_link_)
@@ -317,17 +340,17 @@ if prompt := st.chat_input("What is your question?"):
                     
                     # Display the DataFrame in the chat history
                     st.write(st.session_state['df'])
-                  
+                                        
                     #Since we successfully pulled the data, trigger EDA bot
                     st.session_state.analysis = True
                     #Make a copy since we don't want to have a super long chat log
-                    eda_bot_chat = eda_bot_chat_og.copy()
+                    #eda_bot_chat = eda_bot_chat_og.copy()
                 
                     fake_typing("Now generating some potential analyses!\n")
             
                     df_head = api_data.head().to_json(orient='records')[1:-1].replace('},{', '} {')
 
-                    eda_output = predict(model_type_chat = eda_bot_chat, user_input = f"what kind of analysis could I do on a dataframe from USDA NASS that {response} Ensure your python code prints the output. The data looks like like: {df_head}",
+                    eda_output = predict(model_type_chat = st.session_state.eda_bot_chat_og, user_input = f"what kind of analysis could I do on a dataframe from USDA NASS that {response} Ensure your python code prints the output. The data looks like like: {df_head}",
                                      model= model)
                     
                     ideas = re.sub("\n```python.*?\n```", '', eda_output, flags=re.DOTALL)
@@ -340,7 +363,7 @@ if prompt := st.chat_input("What is your question?"):
                     
                     
                     
-                    st.session_state.eda_convo = eda_bot_chat
+                    st.session_state.eda_convo = eda_bot_chat_og
                     
                     master_break = True
                 
@@ -414,11 +437,7 @@ if prompt := st.chat_input("What is your question?"):
             
                 st.session_state.analysis_count += 1
 
-                
-                
-                
-        
-            
+
                     
         if api_num_tries >= num_retries:
             fake_typing("I'm sorry, but I'm unable to get that data. Can you try again?")
@@ -435,5 +454,3 @@ if prompt := st.chat_input("What is your question?"):
     
     
     
-
-
