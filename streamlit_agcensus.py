@@ -7,12 +7,10 @@ import re
 from datetime import datetime
 
 
-# To run this script use streamlit run
-#on the command line
-
+#This script loosely inspired by
+#https://github.com/marshmellow77/streamlit-chatgpt-ui/blob/main/app.py
 
 #______________________Configuration items___________________________________#
-
 #Maximum number of times GPT will be asked to fix a broken API link or python code
 num_retries = 5
 
@@ -206,6 +204,9 @@ def fake_typing(text):
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
 
+
+##______________________Session State Stuff __________________________________##
+
 #st.set_page_config(layout="wide")
 #Website Name
 st.title("AgCensusGPT")
@@ -241,12 +242,28 @@ if "eda_bot_chat_og" not in st.session_state:
     st.session_state.eda_bot_chat_og = eda_bot_chat_og
 
 
-# Sidebar - let user choose model
+# Sidebar - let user choose model, see cost, and clear history
 st.sidebar.title("Chatbot Options")
 model_name = st.sidebar.radio("Choose a model:", ("GPT-3.5", "GPT-4"))
-
 counter_placeholder = st.sidebar.empty()
 counter_placeholder.write(f"Total cost of this conversation: ${st.session_state['total_cost']:.5f}")
+clear_button = st.sidebar.button("Clear Conversation", key="clear")
+
+# reset everything
+if clear_button:
+    st.session_state['messages'] = []
+    st.session_state['analysis'] = []
+    st.session_state['df'] = ''
+  
+    st.session_state['messenger_bot_chat'] = messenger_bot_chat
+    st.session_state['api_bot_chat'] = api_bot_chat
+    st.session_state['eda_bot_chat_og'] = eda_bot_chat_og
+
+    st.session_state['cost'] = 0.0
+    st.session_state['total_cost'] = 0.0
+    st.session_state['total_tokens'] = []
+    counter_placeholder.write(f"Total cost of this conversation: ${st.session_state['total_cost']:.5f}")
+
 
 # Map model names to OpenAI model IDs
 if model_name == "GPT-3.5":
