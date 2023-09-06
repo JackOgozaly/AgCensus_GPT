@@ -264,7 +264,7 @@ clear_button = st.sidebar.button("Clear Conversation", key="clear")
 # reset everything
 if clear_button:
     st.session_state['messages'] = []
-    st.session_state['analysis'] = []
+    st.session_state['analysis'] = False
     st.session_state['df'] = ''
   
     st.session_state['messenger_bot_chat'] = messenger_bot_chat
@@ -276,7 +276,7 @@ if clear_button:
     st.session_state['saved_api_data'] = None
     st.session_state['eda_convo'] = None
 
-    st.session_state['cost'] = 0.0
+    st.session_state['cost'] = []
     st.session_state['total_cost'] = 0.0
     st.session_state['total_tokens'] = []
     counter_placeholder.write(f"Total cost of this conversation: ${st.session_state['total_cost']:.5f}")
