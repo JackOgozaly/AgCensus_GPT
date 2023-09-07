@@ -347,20 +347,13 @@ if prompt := st.chat_input("What is your question?"):
                     #The Value column in the dataframe comes in as a string with weird formatting
                     #Quirks
                     if 'Value' in api_data.columns:
-
-                        percent_null = len(api_data[api_data['Value'].str.strip() == '(D)']) / len(api_data)
-
+                        fake_typing(f"Data successfully pulled from NASS API with {api_data.shape[0]} rows and {api_data.shape[1]} columns")
+                        fake_typing(f"{format(len(api_data[api_data['Value'].str.strip() == '(D)']) / len(api_data), '.0%')} of rows in the pulled data contain redacted information, this may skew the analysis")
+                      
                         api_data['Value'] = api_data['Value'].str.replace(',', '', regex=False)
                         api_data['Value'] = api_data['Value'].str.replace('(NA)', '', regex=False)
                         api_data['Value'] = api_data['Value'].str.replace('()', '', regex=False)
                         api_data['Value'] = pd.to_numeric(api_data['Value'], errors= "coerce")
-    
-                    fake_typing(f"Data successfully pulled from NASS API with {api_data.shape[0]} rows and {api_data.shape[1]} columns")
-
-                    if percent_null < .2:
-                      fake_typing(f"{format(percent_null, '.0%')} of rows in the pulled data contain redacted information, this may slightly skew the analysis")
-                    else:
-                      fake_typing(f"{format(percent_null, '.0%')} of rows in the pulled data contain redacted information, this may heavily skew the analysis")
                   
                     #st.dataframe(api_data) 
                     # Store the DataFrame in the `st.session_state` object
