@@ -347,6 +347,9 @@ if prompt := st.chat_input("What is your question?"):
                     #The Value column in the dataframe comes in as a string with weird formatting
                     #Quirks
                     if 'Value' in api_data.columns:
+
+                        percent_null = len(api_data[api_data['Value'].str.strip() == '(D)']) / len(api_data)
+
                         api_data['Value'] = api_data['Value'].str.replace(',', '', regex=False)
                         api_data['Value'] = api_data['Value'].str.replace('(NA)', '', regex=False)
                         api_data['Value'] = api_data['Value'].str.replace('()', '', regex=False)
@@ -354,6 +357,11 @@ if prompt := st.chat_input("What is your question?"):
     
                     fake_typing(f"Data successfully pulled from NASS API with {api_data.shape[0]} rows and {api_data.shape[1]} columns")
 
+                    if percent_null < .2:
+                      fake_typing(f"{format(percent_null, '.0%')} of rows in the pulled data contain redacted information, this may slightly skew the analysis")
+                    else:
+                      fake_typing(f"{format(percent_null, '.0%')} of rows in the pulled data contain redacted information, this may heavily skew the analysis")
+                  
                     #st.dataframe(api_data) 
                     # Store the DataFrame in the `st.session_state` object
                     st.session_state['df'] = api_data
@@ -368,10 +376,15 @@ if prompt := st.chat_input("What is your question?"):
                 
                     fake_typing("Now generating some potential analyses!\n")
             
-                    df_head = api_data.head().to_json(orient='records')[1:-1].replace('},{', '} {')
-
-                    eda_output = predict(model_type_chat = st.session_state.eda_bot_chat_og, user_input = f"what kind of analysis could I do on a dataframe from USDA NASS that {response} Ensure your python code prints the output. The data looks like like: {df_head}",
-                                     model= model)
+                    df_head = api_data.head(3).to_json(orient='records')[1:-1].replace('},{', '} {')
+                    stat_vals = api_data['statisticcat_desc'].unique()
+                    unit_vals = api_data['unit_desc'].unique()
+                    
+                  
+                    eda_output = predict(model_type_chat = st.session_state.eda_bot_chat_og, model= model,
+                                         user_input = f"""what kind of analysis could I do on a dataframe from USDA NASS that {response}. Ensure your python code prints the output in a streamlit environment. 
+                                          My column 'statisticcat_desc' has the following unique values: {stat_vals}. My column 'unit_vals' has the following unique values: {unit_vals}. 
+                                          Any analysis you do should filter these columns. The data looks like like: {stat_vals}""")
                     
                     ideas = re.sub("\n```python.*?\n```", '', eda_output, flags=re.DOTALL)
                     
