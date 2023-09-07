@@ -193,7 +193,7 @@ def fake_typing(text):
     full_response = ""
     
     # Simulate stream of response with milliseconds delay
-    for chunk in re.findall(r"\w+|\n|[.,!?' ;:]", text): #re.findall(r'\w+|\n|[.,!?;:]', text):    #text.split():
+    for chunk in re.findall(r"\w+|\n|[.,!?' ;:%]", text): #re.findall(r'\w+|\n|[.,!?;:]', text):    #text.split():
         #full_response += chunk + " "
         full_response += chunk
         time.sleep(0.05)
@@ -350,9 +350,9 @@ if prompt := st.chat_input("What is your question?"):
                         fake_typing(f"Data successfully pulled from NASS API with {api_data.shape[0]} rows and {api_data.shape[1]} columns")
                         percent_null = len(api_data[api_data['Value'].str.strip() == '(D)']) / len(api_data)
                         if percent_null < .2:
-                            fake_typing(f"{format(percent_null, '.0%')}% of rows in the pulled data contain redacted information, this may slightly skew the analysis")
+                            fake_typing(f"{format(percent_null, '.0%')} of rows in the pulled data contain redacted information, this may slightly skew the analysis")
                         else:
-                            fake_typing(f"{format(percent_null, '.0%')}% of rows in the pulled data contain redacted information, this may heavily skew the analysis")
+                            fake_typing(f"{format(percent_null, '.0%')} of rows in the pulled data contain redacted information, this may heavily skew the analysis")
                         
                         api_data['Value'] = api_data['Value'].str.replace(',', '', regex=False)
                         api_data['Value'] = api_data['Value'].str.replace('(NA)', '', regex=False)
