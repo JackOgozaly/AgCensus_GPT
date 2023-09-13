@@ -209,7 +209,7 @@ def fake_typing(text):
 
 #st.set_page_config(layout="wide")
 #Website Name
-st.title("AgCensusGPT")
+st.title("AgStats")
 st.caption('This is an un-official application. Please use responsibly.')
                                             
 
