@@ -149,7 +149,7 @@ def predict(model_type_chat, user_input, model):
     response = openai.ChatCompletion.create(
         model=model,
         messages=model_type_chat,
-        temperature = .2)
+        temperature = .1)
     
     reply_txt = response.choices[0].message.content
     
