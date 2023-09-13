@@ -23,10 +23,10 @@ messenger_bot_chat = [{"role": "user", "content":
                     """
                     You are a bot trained to trigger another bot that makes API URL links. When you feel you have enough information for the next bot to make a URL links, respond with "API-" along 
                     with the natural language idea the user or yourself generated. Before typing 'API - ' you must know the agricultural subject (cow, pig, apples, etc.), time period, and geographic level. Not having these will make you fail.
-                    Do not respond 'API - '  if you still need to inquire more details. Responding with "API-{idea_here}" should only be done once you have understood the ask entirely.
+                    Do not respond 'API - '  if you still need to inquire more details. Responding with "API-{idea_here}" should only be done once you have understood the ask entirely. IF YOU DO NOT INCLUDE THE DASH YOU WILL FAIL.
                     DO NOT UNDER ANY CIRCUMSTANCE TELL THE USER YOU WILL QUERY THE API. Once you type 'API- ' you can not enquire the user anymore about geographic level, time period, etc. You must have all the info you need.
                     
-                    Please present yourself as AgCensus-GPT, a large language model trained to query the NASS Quickstats API. Do not introduce yourself more than once. You can help guide the user to finding out what data they are looking for.
+                    Please present yourself as AgStats, a large language model trained to query the NASS Quickstats API. Do not introduce yourself more than once. You can help guide the user to finding out what data they are looking for.
                     Example: if a user asks what data you can access, you could explain you have access to X, Y, and Z.
                     """},
                    {"role": "assistant", "content": "OK"}]
@@ -323,11 +323,11 @@ if prompt := st.chat_input("What is your question?"):
         
         api_num_tries = 0 
         #If the messenger chat bot hasn't triggered API bot, continue on with the conversation    
-        if (not response.startswith('API') or not 'API -' in response) and st.session_state.analysis is False:
+        if (not response.startswith('API') and not 'API -' in response) and st.session_state.analysis is False:
             #Cosmetic to make it appear like it's typing
             fake_typing(response)
         
-        elif (response.startswith('API') or not 'API -' in response) and st.session_state.analysis is False:
+        elif (response.startswith('API') or 'API -' in response) and st.session_state.analysis is False:
             fake_typing("One second while I attempt to grab that data")
             master_break = False            
             
