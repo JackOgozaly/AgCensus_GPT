@@ -361,13 +361,12 @@ if prompt := st.chat_input("What is your question?"):
                   
                     #st.dataframe(api_data) 
                     # Store the DataFrame in the `st.session_state` object
-                    st.session_state['df'] = api_data
-
+                    st.session_state['df'] = api_data.to_csv(index=False).encode("utf-8")
                     
-                    data_as_csv= api_data.to_csv(index=False).encode("utf-8")
-                    st.download_button(
+                    
+                    st.sidebar.download_button(
                         "Download data as CSV", 
-                        data_as_csv, 
+                        st.session_state['df'], 
                         f"agstats_query_{datetime.now().strftime('%m%d%y')}.csv",
                         "text/csv",
                         key="download-tools-csv",
