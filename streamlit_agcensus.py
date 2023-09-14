@@ -5,6 +5,7 @@ import requests
 import time
 import re
 from datetime import datetime
+import io
 
 
 #This script loosely inspired by
