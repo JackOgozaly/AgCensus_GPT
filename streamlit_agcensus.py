@@ -391,7 +391,7 @@ if prompt := st.chat_input("What is your question?"):
                     eda_output = predict(model_type_chat = st.session_state.eda_bot_chat_og, model= model,
                                          user_input = f"""what kind of analysis could I do on a dataframe from USDA NASS that {response}. Ensure your python code prints the output in a streamlit environment. 
                                           My column 'statisticcat_desc' has the following unique values: {stat_vals}. My column 'unit_vals' has the following unique values: {unit_vals}. 
-                                          Any analysis you do should filter these columns. The data looks like like: {stat_vals}""")
+                                          Any analysis you do should filter these columns. The data looks like like: {df_head}""")
                     
                     ideas = re.sub("\n```python.*?\n```", '', eda_output, flags=re.DOTALL)
                     
