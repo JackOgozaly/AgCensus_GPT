@@ -362,7 +362,9 @@ if prompt := st.chat_input("What is your question?"):
                     #st.dataframe(api_data) 
                     # Store the DataFrame in the `st.session_state` object
                     st.session_state['df'] = api_data
-                    
+
+                    st.download_button('Download CSV', api_data)
+                  
                     # Display the DataFrame in the chat history
                     st.write(st.session_state['df'])
                                         
