@@ -372,7 +372,7 @@ if prompt := st.chat_input("What is your question?"):
                         key="download-tools-csv",
                     )
                     # Display the DataFrame in the chat history
-                    st.write(st.session_state['df'])
+                    st.write(pd.read_csv(st.session_state['df']))
                                         
                     #Since we successfully pulled the data, trigger EDA bot
                     st.session_state.analysis = True
