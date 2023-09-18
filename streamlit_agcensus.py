@@ -339,7 +339,8 @@ if prompt := st.chat_input("What is your question?"):
                     break
                 
                 api_link_ = predict(model_type_chat = st.session_state.api_bot_chat, user_input = response, model = model)
-        
+                fake_typing(f"NIMA!!!! YOUR API URL LINK IS: {api_link_}")
+                fake_typing("Go forth and bring peace to hyrule (I played some Zelda today, what a game, amirite?")
                 #Take the chatGPT 
                 api_data = api_read(api_link_)
                 
